@@ -4,7 +4,7 @@ import {
 } from '../actions/index';
 import { merge } from 'lodash';
 
-const sessionReducer = (oldState = {currentUser: false}, action) => {
+const sessionReducer = (oldState = {currentUser: null}, action) => {
     Object.freeze(oldState);
     let newState;
     switch(action.type){

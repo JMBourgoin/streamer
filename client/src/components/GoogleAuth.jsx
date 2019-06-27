@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { signIn, signOut } from '../actions/index';
 
 const msp = state => {
-    debugger
     return(
         {
             currentUser: state.session.currentUser
@@ -24,6 +23,7 @@ class GoogleAuth extends React.Component {
         super(props);
         this.state = {};
     }
+
     componentDidMount(){
         window.gapi.load('client:auth2', () => {
             window.gapi.client.init({
@@ -31,11 +31,21 @@ class GoogleAuth extends React.Component {
                 scope: 'email'
             }).then(()=> {
                 this.auth = window.gapi.auth2.getAuthInstance();
-                this.setState({isSignedIn: this.auth.isSignedIn.get()});
+                this.onAuthChange(this.auth.isSignedIn.get());
+                this.auth.isSignedIn.listen(this.onAuthChange);
+                
             });
         });
     }
 
+   onAuthChange = currentUser => {
+       if(currentUser) {
+           this.props.signIn();
+       } else {
+           this.props.signOut();
+       }
+   }
+   
    logOut = (e) => {
         e.preventDefault();
        this.auth.signOut().then(()=>{
@@ -68,8 +78,6 @@ class GoogleAuth extends React.Component {
     }
 
     render(){
-        debugger
-      
         return (<div>{this.renderAuthButton()}</div>)
     }
 }
